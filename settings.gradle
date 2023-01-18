@@ -1,0 +1,38 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven {
+            url System.getenv("MAVEN_VERYFI_URL")
+            credentials {
+                username = System.getenv("MAVEN_VERYFI_USERNAME")
+                password = System.getenv("MAVEN_VERYFI_PASSWORD")
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+dependencyResolutionManagement {
+    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven {
+            url System.getenv("MAVEN_VERYFI_URL")
+            credentials {
+                username = System.getenv("MAVEN_VERYFI_USERNAME")
+                password = System.getenv("MAVEN_VERYFI_PASSWORD")
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+rootProject.name = "LensHeadlessReceiptsDemo"
+include ':app'
