@@ -1,0 +1,130 @@
+[
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_vector_oval_ripple.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_vector_oval_ripple.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_vector_close.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_vector_close.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/xml_data_extraction_rules.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_vector_capture_oval_ripple.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_vector_capture_oval_ripple.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable-v24_ic_vector_camera.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable-v24/ic_vector_camera.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/anim_layout_animation.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/anim/layout_animation.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/color_color_vector_selector_ripple.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/color/color_vector_selector_ripple.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/layout_activity_main.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-pngs-56:/drawable-anydpi-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable-v24_ic_vector_settings.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable-v24/ic_vector_settings.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_vector_close_shape.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_vector_close_shape.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/anim_item_animation_fall_down.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/anim/item_animation_fall_down.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/layout_logs_list_item.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/logs_list_item.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/layout_activity_logs.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_logs.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/xml_backup_rules.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable-anydpi-v24_ic_vector_veryfi_black.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-pngs-56:/drawable-anydpi-v24/ic_vector_veryfi_black.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable_ic_veryfi_lens_camera.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/drawable/ic_veryfi_lens_camera.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/drawable-anydpi-v24_ic_vector_veryfi_white.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-pngs-56:/drawable-anydpi-v24/ic_vector_veryfi_white.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/layout_activity_capture.xml.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_capture.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-merged_res-61:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/mipmap-mdpi/ic_launcher.webp"
+    }
+]

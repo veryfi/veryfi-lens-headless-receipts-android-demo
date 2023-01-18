@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-mergeDebugResources-60:/layout/activity_main.xml",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-mergeDebugResources-60:/layout/activity_logs.xml",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_logs.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-mergeDebugResources-60:/layout/activity_capture.xml",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/activity_capture.xml"
+    },
+    {
+        "merged": "com.veryfi.lens.headless.receipts.demo.app-mergeDebugResources-60:/layout/logs_list_item.xml",
+        "source": "com.veryfi.lens.headless.receipts.demo.app-main-63:/layout/logs_list_item.xml"
+    }
+]
