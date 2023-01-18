@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/cameraShape">
+        <shape android:shape="oval">
+            <solid android:color="#99000000" />
+            <size
+                android:width="62dp"
+                android:height="62dp" />
+        </shape>
+    </item>
+
+    <item android:id="@+id/camera">
+        <shape android:shape="oval">
+            <stroke android:color="@android:color/transparent"
+                android:width="10dp"/>
+            <solid android:color="#ffffff" />
+            <size
+                android:width="52dp"
+                android:height="52dp" />
+        </shape>
+    </item>
+</layer-list>
+

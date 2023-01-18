@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">LensHeadlessReceiptsDemo</string>
+    <string name="settings_section">Settings</string>
+    <string name="settings_auto_rotate">Auto rotate</string>
+    <string name="settings_auto_doc_detection">Auto doc detection and crop</string>
+    <string name="settings_blur_detection">Blur detection</string>
+    <string name="settings_auto_skew_correction">Auto skew correction</string>
+    <string name="settings_auto_crop_gallery">Auto crop gallery</string>
+    <string name="content_description">content description</string>
+    <string name="scan_title">Scan</string>
+    <string name="logs_result" translatable="false">Result</string>
+    <string name="privacy_police" translatable="false">The captured data is safe. It is not cached, shared or uploaded anywhere. The data extraction is made exclusively on the device. Check our <font color='blue'>Privacy Policy</font></string>
+    <string name="privacy_police_link" translatable="false">https://www.veryfi.com/privacy</string>
+</resources>
