@@ -5,12 +5,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.lriccardo.timelineview.TimelineDecorator
 import com.veryfi.lens.headless.receipts.demo.R
 import com.veryfi.lens.headless.receipts.demo.databinding.ActivityLogsBinding
 import com.veryfi.lens.headless.receipts.demo.helpers.ThemeHelper
+import org.json.JSONObject
 
 class LogsActivity : AppCompatActivity() {
 
@@ -63,11 +62,8 @@ class LogsActivity : AppCompatActivity() {
     private fun showLogs() {
         val log = Log()
         val jsonString = intent.extras?.getSerializable(DATA) as String
-        val jsonParser = JsonParser()
-        val jsonElement = jsonParser.parse(jsonString)
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        val prettyJsonString = gson.toJson(jsonElement)
-        log.message = prettyJsonString
+        val json = JSONObject(jsonString)
+        log.message = json
         log.title = resources.getString(R.string.logs_result)
         adapter.addItem(log)
         adapter.notifyDataSetChanged()
