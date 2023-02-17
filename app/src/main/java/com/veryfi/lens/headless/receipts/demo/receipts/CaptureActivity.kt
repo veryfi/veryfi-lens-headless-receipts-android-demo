@@ -100,7 +100,9 @@ class CaptureActivity : AppCompatActivity() {
                     it.setSurfaceProvider(viewBinding.cameraPreview.surfaceProvider)
                 }
             imageCapture = ImageCapture.Builder().setTargetRotation(Surface.ROTATION_90).build()
-            val imageAnalyzer = ImageAnalysis.Builder().setTargetAspectRatio(screenAspectRatio)
+            val imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .setTargetRotation(Surface.ROTATION_0).build()
             imageAnalyzer.setAnalyzer(
                 Executors.newSingleThreadExecutor(),
