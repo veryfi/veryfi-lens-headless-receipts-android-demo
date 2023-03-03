@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LensHeadlessReceiptsDemo</string>
+    <string name="app_name">Headless Receipts Lens Demo</string>
     <string name="settings_section">Settings</string>
     <string name="settings_auto_rotate">Auto rotate</string>
     <string name="settings_auto_doc_detection">Auto doc detection and crop</string>
