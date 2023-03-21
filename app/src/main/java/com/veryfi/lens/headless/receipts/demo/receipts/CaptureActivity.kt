@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.veryfi.lens.headless.receipts.VeryfiLensHeadless
 import com.veryfi.lens.headless.receipts.VeryfiLensHeadlessDelegate
-import com.veryfi.lens.headless.receipts.demo.Application
+import com.veryfi.lens.headless.receipts.demo.BuildConfig
 import com.veryfi.lens.headless.receipts.demo.databinding.ActivityCaptureBinding
 import com.veryfi.lens.headless.receipts.demo.helpers.ThemeHelper
 import com.veryfi.lens.headless.receipts.demo.logs.LogsActivity
@@ -76,14 +76,12 @@ class CaptureActivity : AppCompatActivity() {
         veryfiLensSettings.autoSkewCorrectionIsOn = autoSkewCorrectionIsOn
         veryfiLensSettings.autoCropGalleryIsOn = autoCropGalleryIsOn
 
-        veryfiLensHeadlessCredentials.apiKey = Application.AUTH_API_KEY
-        veryfiLensHeadlessCredentials.username = Application.AUTH_USERNAME
-        veryfiLensHeadlessCredentials.clientId = Application.CLIENT_ID
+        veryfiLensHeadlessCredentials.apiKey = AUTH_API_KEY
+        veryfiLensHeadlessCredentials.username = AUTH_USERNAME
+        veryfiLensHeadlessCredentials.clientId = CLIENT_ID
 
         VeryfiLensHeadless.configure(
-            this.application,
-            veryfiLensHeadlessCredentials,
-            veryfiLensSettings
+            application, veryfiLensHeadlessCredentials, veryfiLensSettings
         ) {}
     }
 
@@ -338,6 +336,10 @@ class CaptureActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val CLIENT_ID = BuildConfig.VERYFI_CLIENT_ID
+        const val AUTH_USERNAME = BuildConfig.VERYFI_USERNAME
+        const val AUTH_API_KEY = BuildConfig.VERYFI_API_KEY
+
         private const val DATA = "data"
         private const val MIN_LUMEN_FLASH_TRIGGER = 105
         private const val TAG = "HeadlessReceiptsActivity"
