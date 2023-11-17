@@ -3,12 +3,12 @@ package com.veryfi.lens.headless.receipts.demo.receipts
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.WindowManager.LayoutParams.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -23,7 +23,7 @@ import com.veryfi.lens.headless.receipts.demo.helpers.ThemeHelper
 import com.veryfi.lens.headless.receipts.demo.logs.LogsActivity
 import com.veryfi.lens.helpers.*
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -32,40 +32,35 @@ import kotlin.math.min
 
 class CaptureActivity : AppCompatActivity() {
 
+    private var camera: Camera? = null
     private lateinit var viewBinding: ActivityCaptureBinding
     private lateinit var imageCapture: ImageCapture
-    private var camera: Camera? = null
-    private var cameraProvider: ProcessCameraProvider? = null
     private var rectViewPort: Rect? = null
-    private var autoRotateIsOn = true
-    private var autoDocDetectionAndCropIsOn = true
-    private var blurDetectionIsOn = true
-    private var autoSkewCorrectionIsOn = true
-    private var autoCropGalleryIsOn = true
+    private var isTakingPhoto = false
+
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
         super.onCreate(savedInstanceState)
+        setupWindow()
         viewBinding = ActivityCaptureBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         ThemeHelper.setSecondaryColorToStatusBar(this, application)
-        setupHeadless()
-        setUpVeryfiLensDelegate()
         checkPermissions()
         setUpClickEvents()
     }
 
+    private fun setupWindow() {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN)
+    }
+
     private fun setupHeadless() {
-        autoRotateIsOn = intent.extras?.getSerializable(AUTO_ROTATE) as Boolean
-        autoDocDetectionAndCropIsOn =
-            intent.extras?.getSerializable(AUTO_DOC_DETECTION_CROP) as Boolean
-        blurDetectionIsOn = intent.extras?.getSerializable(BLUR_DETECTION) as Boolean
-        autoSkewCorrectionIsOn = intent.extras?.getSerializable(AUTO_SKEW_CORRECTION) as Boolean
-        autoCropGalleryIsOn = intent.extras?.getSerializable(AUTO_CROP_GALLERY) as Boolean
+        val autoRotateIsOn = intent.extras?.getSerializable(AUTO_ROTATE) as Boolean
+        val autoDocDetectionAndCropIsOn = intent.extras?.getSerializable(AUTO_DOC_DETECTION_CROP) as Boolean
+        val blurDetectionIsOn = intent.extras?.getSerializable(BLUR_DETECTION) as Boolean
+        val autoSkewCorrectionIsOn = intent.extras?.getSerializable(AUTO_SKEW_CORRECTION) as Boolean
+        val autoCropGalleryIsOn = intent.extras?.getSerializable(AUTO_CROP_GALLERY) as Boolean
 
         val veryfiLensHeadlessCredentials = VeryfiLensCredentials()
         val veryfiLensSettings = VeryfiLensSettings()
@@ -82,147 +77,155 @@ class CaptureActivity : AppCompatActivity() {
 
         VeryfiLensHeadless.configure(
             application, veryfiLensHeadlessCredentials, veryfiLensSettings
-        ) {}
+        ) { success ->
+            if (success) {
+                setUpVeryfiLensDelegate()
+                startCamera()
+            } else {
+                Toast.makeText(
+                    this, "Credentials invalid.", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        val screenAspectRatio = aspectRatio()
         cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(Surface.ROTATION_0)
-                .build()
-                .also {
-                    it.setSurfaceProvider(viewBinding.cameraPreview.surfaceProvider)
-                }
-            imageCapture = ImageCapture.Builder().setTargetRotation(Surface.ROTATION_90).build()
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .setTargetRotation(Surface.ROTATION_0).build()
-            imageAnalyzer.setAnalyzer(
-                Executors.newSingleThreadExecutor(),
-                CameraAnalyzer { byteArray, width, height, cropRect ->
-                    //ViewPort distortion
-                    rectViewPort = cropRect
-                    //Integration with Lens SDK
-                    if (viewBinding.cameraPreview.visibility != View.GONE) {
-                        val frame = Frame(byteArray, width, height)
-                        VeryfiLensHeadless.processFrame(frame)
-                    }
-                })
-            try {
-                cameraProvider?.unbindAll()
-                val useCaseGroup = viewBinding.cameraPreview.viewPort?.let {
-                    UseCaseGroup.Builder()
-                        .addUseCase(preview)
-                        .addUseCase(imageAnalyzer)
-                        .addUseCase(imageCapture)
-                        .setViewPort(it)
-                        .build()
-                } ?: run {
-                    UseCaseGroup.Builder()
-                        .addUseCase(preview)
-                        .addUseCase(imageAnalyzer)
-                        .addUseCase(imageCapture)
-                        .build()
-                }
-                camera = cameraProvider?.bindToLifecycle(
-                    this,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCaseGroup
-                )
-                startAutoFocusing()
-                startFocusOnClick()
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
+            bindCameraUseCases(cameraProviderFuture.get())
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun bindCameraUseCases(cameraProvider: ProcessCameraProvider) {
+        val preview = buildPreview()
+        imageCapture = ImageCapture.Builder().setTargetRotation(Surface.ROTATION_90).build()
+        val imageAnalyzer = buildImageAnalyzer()
+
+        val useCaseGroup = viewBinding.cameraPreview.viewPort?.let {
+            UseCaseGroup.Builder()
+                .addUseCase(preview)
+                .addUseCase(imageAnalyzer)
+                .addUseCase(imageCapture)
+                .setViewPort(it)
+                .build()
+        } ?: run {
+            UseCaseGroup.Builder()
+                .addUseCase(preview)
+                .addUseCase(imageAnalyzer)
+                .addUseCase(imageCapture)
+                .build()
+        }
+        try {
+            cameraProvider.unbindAll()
+            camera = cameraProvider.bindToLifecycle(
+                this, CameraSelector.DEFAULT_BACK_CAMERA, useCaseGroup
+            )
+            startAutoFocusing()
+            startFocusOnClick()
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case binding failed", exc)
+        }
+    }
+
+    private fun buildPreview(): Preview {
+        return Preview.Builder()
+            .setTargetAspectRatio(aspectRatio())
+            .setTargetRotation(Surface.ROTATION_0)
+            .build().also {
+                it.setSurfaceProvider(viewBinding.cameraPreview.surfaceProvider)
+            }
+    }
+
+    private fun buildImageAnalyzer(): ImageAnalysis {
+        val imageAnalyzer = ImageAnalysis.Builder()
+            .setTargetAspectRatio(aspectRatio())
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+            .setTargetRotation(Surface.ROTATION_0).build()
+        imageAnalyzer.setAnalyzer(
+            Executors.newSingleThreadExecutor(),
+            CameraAnalyzer { byteArray, width, height, cropRect ->
+                rectViewPort = cropRect
+                if (viewBinding.cameraPreview.visibility != View.GONE && !isTakingPhoto) {
+                    VeryfiLensHeadless.processFrame(Frame(byteArray, width, height))
+                }
+            })
+        return imageAnalyzer
+    }
+
+    private fun aspectRatio(): Int {
+        val width = ScreenHelper.getScreenWidth(this)
+        val height = ScreenHelper.getScreenHeight(this)
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        return if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            AspectRatio.RATIO_4_3
+        } else {
+            AspectRatio.RATIO_16_9
+        }
+    }
+
+    private fun captureImage() {
+        isTakingPhoto = true
+        imageCapture.takePicture(
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    val frame = Frame(image.toByteArray(), image.width, image.height)
+                    VeryfiLensHeadless.captureFrame(frame)
+                    image.close()
+                    isTakingPhoto = false
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Log.e(TAG, "Error capturing image: ${exception.message}", exception)
+                    isTakingPhoto = false
+                }
+            }
+        )
     }
 
     private fun startAutoFocusing() {
         val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1f, 1f)
             .createPoint(.2f, .5f)
-        try {
-            val autoFocusAction = FocusMeteringAction.Builder(
-                autoFocusPoint,
-                FocusMeteringAction.FLAG_AF
-            ).apply {
-                setAutoCancelDuration(AUTO_FOCUS_TIME, TimeUnit.SECONDS)
-            }.build()
-            camera?.cameraControl?.startFocusAndMetering(autoFocusAction)
-        } catch (e: CameraInfoUnavailableException) {
-            LogHelper.e(
-                TAG,
-                "Can't do auto focus",
-                e
-            )
-        }
-    }
-
-    private fun captureImage() {
-        if (EmulatorHelper.isProbablyRunningOnEmulator()) {
-            val stream = ByteArrayOutputStream()
-            viewBinding.cameraPreview.bitmap?.let {
-                it.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                VeryfiLensHeadless.captureFrame(Frame(stream.toByteArray(), it.width, it.height))
-            }
-        } else {
-            imageCapture.takePicture(ContextCompat.getMainExecutor(this), object :
-                ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    LogHelper.d(TAG, "onCaptureSuccess")
-                    val byteArray = ImageProxyUtils.imageProxyToByteArray(image)
-                    val frame = Frame(byteArray, image.width, image.height)
-                    VeryfiLensHeadless.captureFrame(frame)
-                    super.onCaptureSuccess(image)
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    LogHelper.e(TAG, "Error: ${exception.message}")
-                    super.onError(exception)
-                }
-            }
-            )
-        }
+        val autoFocusAction =
+            FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
+                .setAutoCancelDuration(AUTO_FOCUS_TIME, TimeUnit.SECONDS)
+                .build()
+        camera?.cameraControl?.startFocusAndMetering(autoFocusAction)
     }
 
     private fun startFocusOnClick() {
         viewBinding.cameraPreview.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                    viewBinding.cameraPreview.width.toFloat(),
-                    viewBinding.cameraPreview.height.toFloat()
-                )
-                val autoFocusPoint = factory.createPoint(event.x, event.y)
-                try {
-                    camera?.cameraControl?.startFocusAndMetering(
-                        FocusMeteringAction.Builder(
-                            autoFocusPoint,
-                            FocusMeteringAction.FLAG_AF
-                        ).apply {
-                            //focus only when the user tap the preview
-                            disableAutoCancel()
-                        }.build()
-                    )
-                } catch (e: CameraInfoUnavailableException) {
-                    LogHelper.e(TAG, "Can't do manual focus", e)
-                }
+                performManualFocus(event.x, event.y)
             }
             viewBinding.cameraPreview.performClick()
         }
     }
 
+    private fun performManualFocus(x: Float, y: Float) {
+        val factory = SurfaceOrientedMeteringPointFactory(
+            viewBinding.cameraPreview.width.toFloat(),
+            viewBinding.cameraPreview.height.toFloat()
+        )
+        val autoFocusPoint = factory.createPoint(x, y)
+        val focusAction = FocusMeteringAction.Builder(autoFocusPoint, FocusMeteringAction.FLAG_AF)
+            .disableAutoCancel()
+            .build()
+        camera?.cameraControl?.startFocusAndMetering(focusAction)
+    }
+
     private fun setUpVeryfiLensDelegate() {
         VeryfiLensHeadless.setDelegate(object : VeryfiLensHeadlessDelegate {
             override fun veryfiLensClose(json: JSONObject) {
-
+                Toast.makeText(
+                    this@CaptureActivity,
+                    "Veryfi Lens Headless close",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             override fun veryfiLensError(json: JSONObject) {
-                showExtractedData(json)
+                Log.e(TAG, "Veryfi Lens Error: ${json.toString(2)}")
             }
 
             override fun veryfiLensSuccess(json: JSONObject) {
@@ -246,6 +249,8 @@ class CaptureActivity : AppCompatActivity() {
     private fun drawCorners(json: JSONObject) {
         viewBinding.relativeLayout.removeAllViews()
         val rectangles = json.getJSONArray(RECTANGLES)
+        if (rectangles.length() == 0) return
+
         for (i in 0 until rectangles.length()) {
             val rectangle = rectangles.getJSONObject(i)
             val path = Path()
@@ -259,6 +264,7 @@ class CaptureActivity : AppCompatActivity() {
     private fun drawCorner(corner: JSONObject, index: Int, path: Path) {
         var x = corner.getDouble(X_VALUE).toFloat()
         var y = corner.getDouble(Y_VALUE).toFloat()
+
         rectViewPort?.let {
             x -= it.top
             y -= it.left
@@ -277,62 +283,45 @@ class CaptureActivity : AppCompatActivity() {
         }
     }
 
+    private fun ImageProxy.toByteArray(): ByteArray {
+        val planeProxy = planes[0]
+        val buffer: ByteBuffer = planeProxy.buffer
+        val bytes = ByteArray(buffer.remaining())
+        buffer.get(bytes)
+        return bytes
+    }
+
     private fun checkPermissions() {
         if (allPermissionsGranted()) {
-            startCamera()
+            setupHeadless()
         } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-            )
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it
-        ) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                setupHeadless()
             } else {
-                Toast.makeText(
-                    this,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     private fun setUpClickEvents() {
-        viewBinding.cancel.setOnClickListener {
-            LogHelper.d(TAG, "btnCancel.setOnClickListener")
-            onBackPressed()
-        }
-
-        viewBinding.btnCapture.setOnClickListener {
-            LogHelper.d(TAG, "btnCapture.setOnClickListener")
-            captureImage()
-        }
-    }
-
-    private fun aspectRatio(): Int {
-        this.let {
-            val width = ScreenHelper.getScreenWidth(it)
-            val height = ScreenHelper.getScreenHeight(it)
-            val previewRatio = max(width, height).toDouble() / min(width, height)
-            if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-                return AspectRatio.RATIO_4_3
-            }
-        }
-        return AspectRatio.RATIO_16_9
+        viewBinding.cancel.setOnClickListener { onBackPressed() }
+        viewBinding.btnCapture.setOnClickListener { captureImage() }
     }
 
     companion object {
@@ -341,7 +330,6 @@ class CaptureActivity : AppCompatActivity() {
         const val AUTH_API_KEY = BuildConfig.VERYFI_API_KEY
 
         private const val DATA = "data"
-        private const val MIN_LUMEN_FLASH_TRIGGER = 105
         private const val TAG = "HeadlessReceiptsActivity"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private const val AUTO_FOCUS_TIME = 3L
