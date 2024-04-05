@@ -23,8 +23,8 @@ class RectangleCanvasView(context: Context) : View(context) {
         strokeWidth = 12f // default: Hairline-width (really thin)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.drawPath(path, paint)
+        canvas.drawPath(path, paint)
     }
 }

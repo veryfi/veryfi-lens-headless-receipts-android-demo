@@ -21,8 +21,8 @@ class CornerCanvasView(context: Context) : View(context) {
         strokeWidth = 36f // default: Hairline-width (really thin)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.drawCircle(corner.x, corner.y, 60f, paint)
+        canvas.drawCircle(corner.x, corner.y, 60f, paint)
     }
 }
