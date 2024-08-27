@@ -7,11 +7,24 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.view.WindowManager.LayoutParams.*
+import android.view.MotionEvent
+import android.view.Surface
+import android.view.View
+import android.view.Window
+import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.camera.core.UseCaseGroup
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,9 +34,13 @@ import com.veryfi.lens.headless.receipts.demo.BuildConfig
 import com.veryfi.lens.headless.receipts.demo.databinding.ActivityCaptureBinding
 import com.veryfi.lens.headless.receipts.demo.helpers.ThemeHelper
 import com.veryfi.lens.headless.receipts.demo.logs.LogsActivity
-import com.veryfi.lens.helpers.*
+import com.veryfi.lens.helpers.Frame
+import com.veryfi.lens.helpers.ScreenHelper
+import com.veryfi.lens.helpers.VeryfiLensCredentials
+import com.veryfi.lens.helpers.VeryfiLensSettings
 import org.json.JSONObject
 import java.nio.ByteBuffer
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -37,6 +54,8 @@ class CaptureActivity : AppCompatActivity() {
     private lateinit var imageCapture: ImageCapture
     private var rectViewPort: Rect? = null
     private var isTakingPhoto = false
+    private var isVeryfiReady = false
+    private lateinit var cameraExecutor: ExecutorService
 
     private var count = 0
 
@@ -48,6 +67,8 @@ class CaptureActivity : AppCompatActivity() {
         ThemeHelper.setSecondaryColorToStatusBar(this, application)
         checkPermissions()
         setUpClickEvents()
+        startCamera()
+        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     private fun setupWindow() {
@@ -70,6 +91,7 @@ class CaptureActivity : AppCompatActivity() {
         veryfiLensSettings.blurDetectionIsOn = blurDetectionIsOn
         veryfiLensSettings.autoSkewCorrectionIsOn = autoSkewCorrectionIsOn
         veryfiLensSettings.autoCropGalleryIsOn = autoCropGalleryIsOn
+        veryfiLensSettings.gpuIsOn = true
 
         veryfiLensHeadlessCredentials.apiKey = AUTH_API_KEY
         veryfiLensHeadlessCredentials.username = AUTH_USERNAME
@@ -80,7 +102,7 @@ class CaptureActivity : AppCompatActivity() {
         ) { success ->
             if (success) {
                 setUpVeryfiLensDelegate()
-                startCamera()
+                isVeryfiReady = true
             } else {
                 Toast.makeText(
                     this, "Credentials invalid.", Toast.LENGTH_SHORT
@@ -142,10 +164,10 @@ class CaptureActivity : AppCompatActivity() {
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
             .setTargetRotation(Surface.ROTATION_0).build()
         imageAnalyzer.setAnalyzer(
-            Executors.newSingleThreadExecutor(),
+            cameraExecutor,
             CameraAnalyzer { byteArray, width, height, cropRect ->
                 rectViewPort = cropRect
-                if (viewBinding.cameraPreview.visibility != View.GONE && !isTakingPhoto) {
+                if (viewBinding.cameraPreview.visibility != View.GONE && !isTakingPhoto &&isVeryfiReady) {
                     VeryfiLensHeadless.processFrame(Frame(byteArray, width, height))
                 }
             })
