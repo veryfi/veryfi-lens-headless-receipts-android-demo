@@ -80,5 +80,5 @@ dependencies {
     implementation "androidx.camera:camera-extensions:1.3.4"
 
     // Veryfi Lens
-    implementation 'com.veryfi.lens.headless:receipts-sdk:1.7.3.29'
+    implementation 'com.veryfi.lens.headless:receipts-sdk:1.7.3.30'
 }
