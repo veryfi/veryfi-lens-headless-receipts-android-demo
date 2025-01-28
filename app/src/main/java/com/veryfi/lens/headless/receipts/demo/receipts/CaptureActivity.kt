@@ -92,6 +92,7 @@ class CaptureActivity : AppCompatActivity() {
         veryfiLensSettings.autoSkewCorrectionIsOn = autoSkewCorrectionIsOn
         veryfiLensSettings.autoCropGalleryIsOn = autoCropGalleryIsOn
         veryfiLensSettings.gpuIsOn = true
+        veryfiLensSettings.ignoreRemoteSettings = true
 
         veryfiLensHeadlessCredentials.apiKey = AUTH_API_KEY
         veryfiLensHeadlessCredentials.username = AUTH_USERNAME
