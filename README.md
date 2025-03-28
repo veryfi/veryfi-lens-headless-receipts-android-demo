@@ -38,7 +38,7 @@ package manager for Java.
 Add in your project build.gradle file the Veryfi Lens Headless Receipts Android SDK dependency:
 ```ruby
 dependencies {
-    implementation 'com.veryfi.lens.headless:receipts-sdk:2.0.0.13'
+    implementation 'com.veryfi.lens.headless:receipts-sdk:2.0.0.14'
 }
 ```
 
