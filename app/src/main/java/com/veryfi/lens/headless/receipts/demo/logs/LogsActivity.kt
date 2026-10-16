@@ -3,6 +3,7 @@ package com.veryfi.lens.headless.receipts.demo.logs
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lriccardo.timelineview.TimelineDecorator
@@ -18,8 +19,10 @@ class LogsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityLogsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ThemeHelper.applyEdgeToEdgeInsets(binding.root, binding.appBarLayout, binding.timelineRv)
         applicationContext?.let { ThemeHelper.setSecondaryColorToStatusBar(this, it) }
         setUpToolBar()
         loadData()
