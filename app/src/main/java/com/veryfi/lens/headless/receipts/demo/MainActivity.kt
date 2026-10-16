@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.veryfi.lens.headless.receipts.demo.databinding.ActivityMainBinding
+import com.veryfi.lens.headless.receipts.demo.helpers.ThemeHelper
 import com.veryfi.lens.headless.receipts.demo.receipts.CaptureActivity
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        ThemeHelper.applyEdgeToEdgeInsets(viewBinding.root)
         initVeryfiSettings()
         setUpClickEvents()
     }
