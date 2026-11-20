@@ -1,6 +1,6 @@
 ---
 name: veryfi-lens-android-headless-receipts-integrate
-description: "Integrates the Veryfi Lens Headless Receipts SDK (com.veryfi.lens.headless:receipts-sdk:2.7.0.6) with a host-owned CameraX pipeline: configure, processFrame, captureFrame, processGalleryImage, and VeryfiLensHeadlessDelegate. Use when the Android app owns the camera and needs on-device receipt detection and crop. This is not VeryfiLens.uploadImages."
+description: "Integrates the Veryfi Lens Headless Receipts SDK (com.veryfi.lens.headless:receipts-sdk:2.7.0.6) with a host-owned CameraX pipeline: configure, processFrame, captureFrame, processGalleryImage, and VeryfiLensHeadlessDelegate. Use when the Android app owns the camera and needs on-device receipt detection and crop. This is not VeryfiLens.uploadImages. Covers Lens analytics events and notification subscription (events.md)."
 ---
 
 # Veryfi Lens Android — Headless Receipts
@@ -86,7 +86,11 @@ Defaults: `receipts-sdk`, auto-capture, live camera, host owns upload.
 - [implementation.md](implementation.md) — configure, delegate, and launch or camera lifecycle
 - [settings.md](settings.md) — `VeryfiLensSettings` for this product, with Android defaults
 - [callbacks.md](callbacks.md) — delegate payloads
+- [events.md](events.md) — analytics events, metrics, and notification subscription
 - [troubleshooting.md](troubleshooting.md) — symptom, cause, fix
 - [clarifications.md](clarifications.md) — Unconfirmed items, Any-Documents, fraud, field detection
 - [checklist.md](checklist.md) — validation checklist before handing code to the host
 
+## Analytics and metrics
+
+Lens already records interaction events. When the host wants those metrics, subscribe as in [events.md](events.md). Use the event names listed there. Do not invent names. On Android, register `com.veryfi.lens.VeryfiLensSecureAnalyticsEvent`, not the deprecated `com.veryfi.lens.VeryfiLensAnalyticsEvent`. A plugin host calls the plugin observe API instead of registering that broadcast itself.
